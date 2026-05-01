@@ -1,7 +1,7 @@
 FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip git curl \
+    libzip-dev liboniguruma-dev zip unzip git curl \
     && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -18,4 +18,7 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN a2enmod rewrite
 
-EXPOSE 80
+RUN sed -ri -e 's!Listen 80!Listen ${PORT}!g' /etc/apache2/ports.conf
+RUN sed -ri -e 's!<VirtualHost \*:80>!<VirtualHost *:${PORT}>!g' /etc/apache2/sites-available/*.conf
+
+EXPOSE ${PORT}
