@@ -1,7 +1,7 @@
 FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
-    libzip-dev liboniguruma-dev zip unzip git curl \
+    libzip-dev libonig-dev zip unzip git curl \
     && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath
     
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
